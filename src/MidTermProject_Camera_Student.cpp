@@ -100,7 +100,18 @@ int main(int argc, const char *argv[])
         cv::Rect vehicleRect(535, 180, 180, 150);
         if (bFocusOnVehicle)
         {
-            // ...
+            vector<cv::KeyPoint> croppedKeypoints;
+            for (int i = 0; i < keypoints.size(); i++) {
+              int x = keypoints[i].pt.x;
+              int y = keypoints[i].pt.y;
+              cv::Point pt(x, y);
+              if (vehicleRect.contains(pt))
+                croppedKeypoints.push_back(keypoints[i]);
+            }
+            cv::Mat croppedImg = imgGray.clone();
+            string windowName = "Cropped Image";
+            cv::drawKeypoints(imgGray, croppedKeypoints, croppedImg, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+            cv::imshow(windowName, croppedImg);
         }
 
         //// EOF STUDENT ASSIGNMENT
