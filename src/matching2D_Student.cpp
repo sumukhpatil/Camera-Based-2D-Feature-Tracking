@@ -124,6 +124,8 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
   int minResponse = 100;
   double k = 0.04;
 
+  double t = (double)cv::getTickCount();
+
   cv::Mat dst, dst_norm, dst_norm_scaled;
   dst = cv::Mat::zeros(img.size(), CV_32FC1);
   cv::cornerHarris(img, dst, blockSize, apertureSize, k, cv::BORDER_DEFAULT);
@@ -161,15 +163,20 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
       }
     }
   }
-  string windowName = "Harris Corner Detection Results";
-  cv::Mat visImage = dst_norm_scaled.clone();
-  cv::drawKeypoints(dst_norm_scaled, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-  cv::namedWindow(windowName);
-  cv::imshow(windowName, visImage);
-  cv::waitKey(0);
+  t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+  cout << "Harris corner detection with n = " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" <<endl;
+  if (bVis) {
+    string windowName = "Harris Corner Detection Results";
+    cv::Mat visImage = dst_norm_scaled.clone();
+    cv::drawKeypoints(dst_norm_scaled, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    cv::namedWindow(windowName);
+    cv::imshow(windowName, visImage);
+    cv::waitKey(0);
+  }
 }
 
 void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis) {
+  double t = (double)cv::getTickCount();
   if (detectorType.compare("FAST") == 0) {
     auto fast = cv::FastFeatureDetector::create();
     fast->detect(img, keypoints);
@@ -186,6 +193,8 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     auto sift = cv::xfeatures2d::SIFT::create();
     sift->detect(img, keypoints);
   }
+  t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+  cout << detectorType << " detector with n = " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
 
   if (bVis) {
     cv::Mat visImage = img.clone();
