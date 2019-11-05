@@ -48,6 +48,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
             matches.push_back((*it)[0]);
           }
         }
+      cout << "Number of matched keypoints n = " << matches.size() << " keypoints\n";
     }
 }
 
