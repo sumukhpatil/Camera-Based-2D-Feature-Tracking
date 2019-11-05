@@ -107,6 +107,7 @@ int main(int argc, const char *argv[])
               cv::Point pt(x, y);
               if (vehicleRect.contains(pt))
                 croppedKeypoints.push_back(keypoints[i]);
+              keypoints = croppedKeypoints;
             }
             cv::Mat croppedImg = imgGray.clone();
             string windowName = "Cropped Image";
